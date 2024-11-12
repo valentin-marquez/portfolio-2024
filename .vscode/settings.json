@@ -1,0 +1,37 @@
+{
+  "files.associations": {
+    "*.astro": "astro"
+  },
+  "[astro]": {
+    "editor.defaultFormatter": "astro-build.astro-vscode"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "css.validate": false,
+  "editor.tabSize": 4,
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "always"
+  },
+  "editor.quickSuggestions": {
+    "strings": true
+  },
+  "tailwindCSS.includeLanguages": {
+    "astro": "html"
+  },
+  "tailwindCSS.experimental.classRegex": [
+    ["class\\s*:\\s*[\"']([^\"']*)[\"']", "'([^']*)'"],
+    ["class\\s*=\\s*[\"']([^\"']*)[\"']", "\"([^\"]*)\""],
+    ["class:\\s*\"([^\"]*)\""]
+  ],
+  "prettier.tabWidth": 2,
+  "prettier.singleQuote": false,
+  "prettier.semi": true
+}

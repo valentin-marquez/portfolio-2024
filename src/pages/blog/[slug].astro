@@ -1,0 +1,211 @@
+---
+import { CalendarIcon } from "@/components/react/icons";
+import { formatDate } from "@/data/portfolio";
+import Layout from "@/layouts/Layout.astro";
+import { getCollection, render } from "astro:content";
+
+// Get the slug from params
+const { slug } = Astro.params;
+
+// Generate static paths
+export async function getStaticPaths() {
+  const posts = await getCollection("posts", (post) => {
+    return post.data.properties.status?.select?.name === "Published";
+  });
+  return posts.map((post) => ({
+    params: { slug: post.data.properties.slug.rich_text[0].plain_text },
+    props: { post },
+  }));
+}
+
+// Get post from props
+const { post } = Astro.props;
+
+// Get categories and tags
+const categories = post.data.properties.category.multi_select;
+const tags = post.data.properties.tags.multi_select;
+
+// Render the content
+const { Content, headings } = await render(post);
+---
+
+---
+
+<Layout title={`${post.data.properties.title.rich_text[0].plain_text} | Blog`}>
+  <main class="bg-background text-foreground min-h-screen py-12">
+    <article class="container mx-auto px-4 max-w-4xl">
+      <!-- Hero Section -->
+      <header class="mb-12 text-center">
+        <div
+          class="flex items-center justify-center gap-2 text-sm text-muted-foreground mb-6"
+        >
+          <time
+            datetime={post.data.properties.publishedAt.created_time}
+            class="flex items-center gap-1"
+          >
+            <CalendarIcon client:only="react" className="w-4 h-4" />
+            {formatDate(post.data.properties.publishedAt.created_time)}
+          </time>
+          •
+          {
+            post.data.properties.author.people &&
+              post.data.properties.author.people.length > 0 && (
+                <div class="flex items-center gap-2">
+                  <div class="w-6 h-6 rounded-full bg-secondary flex items-center justify-center">
+                    <span class="text-xs">
+                      {post.data.properties.author.people[0].name.charAt(0)}
+                    </span>
+                  </div>
+                  {/* {post.data.properties.author.people[0].avatar_url ? (
+                    <Image
+                      src={post.data.properties.author.people[0].avatar_url}
+                      alt={post.data.properties.author.people[0].name}
+                      class="w-6 h-6 rounded-full"
+                      inferSize
+                    />
+                  ) : (
+                    <div class="w-6 h-6 rounded-full bg-secondary flex items-center justify-center">
+                      <span class="text-xs">
+                        {post.data.properties.author.people[0].name.charAt(0)}
+                      </span>
+                    </div>
+                  )} */}
+                  <span>{post.data.properties.author.people[0].name}</span>
+                </div>
+              )
+          }
+        </div>
+
+        <h1 class="text-4xl md:text-5xl font-bold mb-6 text-primary">
+          {post.data.properties.title.rich_text[0].plain_text}
+        </h1>
+
+        {
+          categories.length > 0 && (
+            <div class="flex flex-wrap justify-center gap-2 mb-8">
+              {categories.map((category: { name: unknown }) => (
+                <span class="px-3 py-1 bg-muted text-muted-foreground rounded-full text-sm ">
+                  {category.name}
+                </span>
+              ))}
+            </div>
+          )
+        }
+
+        <!-- {
+          post.data.properties.featuredImage.files.length > 0 && (
+            <div class="relative aspect-video mb-12 rounded-lg overflow-hidden shadow-lg">
+              <Image
+                src={
+                  fileToUrl(post.data.properties.featuredImage.files[0]) ?? ""
+                }
+                alt={post.data.properties.title.rich_text[0].plain_text}
+                class="w-full h-full object-cover"
+                inferSize
+              />
+            </div>
+          )
+        } -->
+      </header>
+
+      <!-- Content -->
+      <div
+        class="prose prose-lg dark:prose-invert mx-auto
+            prose-headings:
+            prose-h1:text-4xl
+            prose-h2:text-3xl
+            prose-h3:text-2xl
+            prose-p:text-lg
+            prose-pre:rounded-lg
+            prose-pre:shadow-md
+            prose-img:rounded-lg
+            prose-img:shadow-lg
+            prose-a:no-underline
+            prose-a:font-medium
+            prose-strong:text-primary
+            prose-strong:font-semibold
+            prose-em:text-primary/80
+            prose-blockquote:font-normal
+            prose-blockquote:not-italic
+            prose-blockquote:text-muted-foreground
+            prose-ul:my-6
+            prose-ol:my-6
+            prose-li:my-2
+            max-w-none
+            transition-colors
+            duration-300"
+      >
+        <Content />
+
+        <!-- Footer -->
+        <footer class="mt-12 pt-8 border-t border-border">
+          {
+            tags.length > 0 && (
+              <div class="flex flex-wrap gap-2 mb-8">
+                {tags.map((tag: { name: unknown }) => (
+                  <span class="px-3 py-1 text-sm bg-secondary/30 text-secondary-foreground rounded-full ">
+                    #{tag.name}
+                  </span>
+                ))}
+              </div>
+            )
+          }
+
+          <!-- Links Section -->
+          <div class="flex flex-wrap gap-4 items-center justify-between">
+            <div class="flex gap-4">
+              {
+                post.data.properties.githubUrl?.url && (
+                  <a
+                    href={post.data.properties.githubUrl.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-muted-foreground hover:text-primary transition-colors "
+                  >
+                    Ver en GitHub
+                  </a>
+                )
+              }
+              {
+                post.data.properties.demoUrl?.url && (
+                  <a
+                    href={post.data.properties.demoUrl.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-muted-foreground hover:text-primary transition-colors "
+                  >
+                    Ver Demo
+                  </a>
+                )
+              }
+            </div>
+
+            <!-- Back to Blog -->
+            <a
+              href="/blog"
+              class="group inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
+            >
+              <span
+                class="transform transition-transform group-hover:-translate-x-1"
+                >←</span
+              >
+              Volver al Blog
+            </a>
+          </div>
+
+          {
+            post.data.properties.relatedPosts?.relation &&
+              post.data.properties.relatedPosts.relation.length > 0 && (
+                <div class="mt-12">
+                  <h2 class=" text-2xl mb-6">Posts Relacionados</h2>
+                  <div class="grid md:grid-cols-2 gap-6">
+                    {/* Aquí irían los posts relacionados */}
+                  </div>
+                </div>
+              )
+          }
+        </footer>
+      </div>
+    </article>
+  </main>
+</Layout>

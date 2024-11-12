@@ -1,50 +1,233 @@
 ---
+export const prerender = true;
+import "@fontsource-variable/inter";
+import "@fontsource-variable/manrope";
+import "@fontsource/jetbrains-mono";
+import { fade, slide, ViewTransitions } from "astro:transitions";
+import Footer from "@/components/Footer.astro";
+import NavigationToolbar from "@/components/react/NavigationToolbar";
+import { themeScript } from "@/lib/theme";
+import "@/styles/base.css";
+
 interface Props {
-	title: string;
+  title: string;
 }
 
 const { title } = Astro.props;
+
+// Configuración personalizada de transiciones
+const pageTransitions = {
+  forwards: {
+    old: {
+      name: "fadeOut",
+      duration: "0.5s",
+      easing: "ease-out",
+      fillMode: "forwards",
+    },
+    new: {
+      name: "slideIn",
+      duration: "0.5s",
+      easing: "ease-out",
+      fillMode: "forwards",
+    },
+  },
+  backwards: {
+    old: {
+      name: "fadeOut",
+      duration: "0.5s",
+      easing: "ease-in",
+      fillMode: "forwards",
+    },
+    new: {
+      name: "slideIn",
+      duration: "0.5s",
+      easing: "ease-out",
+      fillMode: "forwards",
+    },
+  },
+};
 ---
 
 <!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="description" content="Astro description" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
-	</head>
-	<body>
-		<slot />
-	</body>
+<html lang="es" class="scroll-smooth" transition:animate={pageTransitions}>
+  <head>
+    <!-- Basic meta tags -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="author" content="Valentín Marquez" />
+    <meta
+      name="description"
+      content="Portfolio de Valentín Marquez, Ingeniero en desarrollo de sistemas especializado en Python y JavaScript. Desarrollo web y soluciones tecnológicas."
+    />
+    <meta
+      name="keywords"
+      content="desarrollo web, python, javascript, typescript, react, fullstack, desarrollador, portfolio, ingeniería informática"
+    />
+
+    <!-- Favicon -->
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' x='50' text-anchor='middle' font-size='90' font-family='Space Grotesk' font-weight='bold' fill='rgb(165, 42, 42)'>V</text><style>@media (prefers-color-scheme: dark) { text y { fill: rgb(255, 136, 0); } }</style></svg>"
+    />
+
+    <!-- Title and core functionality -->
+    <title>{title} | Valentín Marquez - Desarrollador Full Stack</title>
+    <ViewTransitions fallback="animate" />
+
+    <script set:html={themeScript} />
+
+    <!-- OpenGraph -->
+    <meta
+      property="og:title"
+      content={`${title} | Valentín Marquez - Desarrollador Full Stack`}
+    />
+    <meta
+      property="og:description"
+      content="Portfolio de Valentín Marquez, Ingeniero en desarrollo de sistemas especializado en Python y JavaScript"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={Astro.url} />
+    <meta property="og:image" content="/og-image.png" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content={`${title} | Valentín Marquez - Desarrollador Full Stack`}
+    />
+    <meta
+      name="twitter:description"
+      content="Portfolio de Valentín Marquez, Ingeniero en desarrollo de sistemas especializado en Python y JavaScript"
+    />
+    <meta name="twitter:image" content="/og-image.png" />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href={Astro.url} />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Schema.org -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Valentín Marquez",
+        "email": "valentin13.mail@gmail.com",
+        "url": "https://nozz.dev/",
+        "jobTitle": "Ingeniero en Desarrollo de Sistemas",
+        "description": "Desarrollador Full Stack especializado en Python y JavaScript",
+        "sameAs": [
+          "https://www.linkedin.com/in/valentinmarquezmunoz/",
+          "https://github.com/valentin-marquez"
+        ]
+      }
+    </script>
+
+    <style is:global>
+      /* Definición de animaciones personalizadas */
+      @keyframes springFadeOut {
+        from {
+          opacity: 1;
+          transform: scale(1);
+        }
+        to {
+          opacity: 0;
+          transform: scale(0.98);
+        }
+      }
+
+      @keyframes springSlideIn {
+        0% {
+          transform: translateX(100%) scale(0.98);
+          opacity: 0;
+        }
+        70% {
+          transform: translateX(-2%) scale(1.01);
+          opacity: 0.7;
+        }
+        100% {
+          transform: translateX(0) scale(1);
+          opacity: 1;
+        }
+      }
+
+      /* Clases para las transiciones */
+      .page-transition {
+        view-transition-name: page;
+      }
+
+      .hero-section {
+        view-transition-name: hero;
+      }
+
+      .projects-grid {
+        view-transition-name: projects;
+      }
+
+      .loading {
+        opacity: 0.7;
+        transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      /* Animaciones con efecto spring */
+      ::view-transition-old(hero),
+      ::view-transition-old(projects) {
+        animation: springFadeOut 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      }
+
+      ::view-transition-new(hero),
+      ::view-transition-new(projects) {
+        animation: springSlideIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)
+          forwards;
+      }
+    </style>
+
+    <script>
+      // Mejorar manejo de transiciones
+      document.addEventListener("astro:page-load", () => {
+        document.documentElement.classList.add("page-loaded");
+        document.body.classList.remove("loading");
+      });
+
+      document.addEventListener("astro:before-preparation", () => {
+        document.documentElement.classList.remove("page-loaded");
+        document.body.classList.add("loading");
+      });
+
+      // Manejar el scroll durante las transiciones
+      document.addEventListener("astro:after-swap", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+
+      // Persistir el tema durante las transiciones
+      document.addEventListener("astro:after-swap", () => {
+        const theme = localStorage.getItem("theme");
+        if (theme) {
+          document.documentElement.classList.toggle("dark", theme === "dark");
+        }
+      });
+    </script>
+  </head>
+  <body
+    class="min-h-screen bg-background text-foreground font-sans antialiased"
+  >
+    <NavigationToolbar transition:persist client:only="react" />
+    <div
+      id="page-content"
+      class="page-transition"
+      transition:animate={slide({ duration: "0.4s" })}
+      transition:name="page"
+    >
+      <slot />
+    </div>
+    <Footer />
+  </body>
 </html>
-<style is:global>
-	:root {
-		--accent: 136, 58, 234;
-		--accent-light: 224, 204, 250;
-		--accent-dark: 49, 10, 101;
-		--accent-gradient: linear-gradient(
-			45deg,
-			rgb(var(--accent)),
-			rgb(var(--accent-light)) 30%,
-			white 60%
-		);
-	}
-	html {
-		font-family: system-ui, sans-serif;
-		background: #13151a;
-	}
-	code {
-		font-family:
-			Menlo,
-			Monaco,
-			Lucida Console,
-			Liberation Mono,
-			DejaVu Sans Mono,
-			Bitstream Vera Sans Mono,
-			Courier New,
-			monospace;
-	}
-</style>

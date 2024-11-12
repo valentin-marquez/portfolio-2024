@@ -1,0 +1,45 @@
+---
+import {
+  DiscordIcon,
+  EmailIcon,
+  GithubIcon,
+  LinkedinIcon,
+} from "../components/react/icons";
+import { socialLinks } from "../data/portfolio";
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="bg-card border-t border-border mt-auto">
+  <div class="container mx-auto px-4 py-8 max-w-4xl">
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+      <div class="text-center md:text-left">
+        <p class="text-sm text-muted-foreground">
+          © {currentYear} Valentin Marquez
+        </p>
+        <p class="text-xs text-muted-foreground mt-1">
+          Hecho con ❤️ usando Astro y Tailwind
+        </p>
+      </div>
+
+      <div class="flex gap-2">
+        {
+          socialLinks.map((link) => (
+            <a
+              href={link.url}
+              class="text-muted-foreground hover:text-accent transition-colors duration-200 p-2 rounded-lg hover:bg-muted"
+              aria-label={`Visitar ${link.name}`}
+            >
+              <span class="flex items-center gap-2">
+                {link.name === "github" && <GithubIcon />}
+                {link.name === "linkedin" && <LinkedinIcon />}
+                {link.name === "discord" && <DiscordIcon />}
+                {link.name === "email" && <EmailIcon />}
+                {link.name.charAt(0).toUpperCase() + link.name.slice(1)}
+              </span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</footer>

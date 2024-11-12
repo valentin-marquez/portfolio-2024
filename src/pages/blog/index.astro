@@ -1,0 +1,64 @@
+---
+import { Alert, AlertDescription } from "@/components/react/alert";
+import BlogTabs from "@/components/react/BlogTabs";
+import Layout from "@/layouts/Layout.astro";
+import { getCollection } from "astro:content";
+
+const posts = await getCollection("posts");
+
+// Group posts by status
+const groupedPosts = posts.reduce((acc, post) => {
+  const status = post.data.properties.status?.select?.name || "published";
+  if (!acc[status]) acc[status] = [];
+  acc[status].push(post);
+  return acc;
+}, {});
+
+// Get post counts
+const totalPosts = posts.length;
+const publishedPosts = groupedPosts.published?.length || 0;
+const featuredPosts = posts.filter(
+  (post) => post.data.properties.featured?.checkbox
+).length;
+---
+
+<Layout title="Blog | Valentín Márquez">
+  <main class="min-h-screen py-12 bg-background">
+    <div class="container mx-auto px-4 max-w-6xl">
+      <!-- Hero Section -->
+      <header class="mb-12 space-y-6">
+        <h1 class="text-4xl font-bold tracking-tight">Mi Blog Personal</h1>
+        <p class="text-xl text-muted-foreground max-w-2xl">
+          Explorando ideas, compartiendo experiencias y documentando mi viaje en
+          el mundo del desarrollo web y la tecnología.
+        </p>
+
+        <div class="flex gap-4 flex-wrap text-sm text-muted-foreground">
+          <div class="flex items-center gap-2">
+            <span class="font-medium">{totalPosts}</span> publicaciones totales
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="font-medium">{publishedPosts}</span> publicadas
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="font-medium">{featuredPosts}</span> destacadas
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Posts Section with integrated featured posts -->
+      <BlogTabs posts={posts} groupedPosts={groupedPosts} client:load />
+
+      {
+        posts.length === 0 && (
+          <Alert>
+            <AlertDescription>
+              No hay publicaciones disponibles en este momento.
+            </AlertDescription>
+          </Alert>
+        )
+      }
+    </div>
+  </main>
+</Layout>
+---
