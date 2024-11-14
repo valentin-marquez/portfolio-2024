@@ -3,7 +3,7 @@ export const prerender = true;
 import "@fontsource-variable/inter";
 import "@fontsource-variable/manrope";
 import "@fontsource/jetbrains-mono";
-import { fade, slide, ViewTransitions } from "astro:transitions";
+import { slide, ViewTransitions } from "astro:transitions";
 import Footer from "@/components/Footer.astro";
 import NavigationToolbar from "@/components/react/NavigationToolbar";
 import { themeScript } from "@/lib/theme";
@@ -76,7 +76,7 @@ const pageTransitions = {
     <title>{title} | Valentín Marquez - Desarrollador Full Stack</title>
     <ViewTransitions fallback="animate" />
 
-    <script set:html={themeScript} />
+    <script set:html={themeScript} is:inline />
 
     <!-- OpenGraph -->
     <meta
@@ -115,7 +115,7 @@ const pageTransitions = {
     />
 
     <!-- Schema.org -->
-    <script type="application/ld+json">
+    <script type="application/ld+json" is:inline>
       {
         "@context": "https://schema.org",
         "@type": "Person",

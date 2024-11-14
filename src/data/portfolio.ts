@@ -32,47 +32,37 @@ export const socialLinks = [
 
 export const projects: Project[] = [
   {
-    title: "Zephyr UI",
-    techs: ["TypeScript", "React", "AI", "TailwindCSS", "Framer Motion"],
-    link: "#",
+    title: "nozz-ui",
+    techs: ["Astro", "TypeScript", "CSS", "JavaScript"],
+    link: "https://ui.nozz.dev/",
     description:
-      "Zephyr UI is a modern React UI library that provides a collection of customizable components for building web applications. The library is designed with accessibility and performance in mind, and includes support for dark mode, animations, and more.",
+      "nozz-ui es una biblioteca moderna de componentes React que combina Radix UI, Tailwind CSS y Framer Motion, optimizada con el espacio de color OKLAB para una mejor percepción y accesibilidad del color. Facilita la implementación rápida y personalizable de componentes UI.",
     isComingSoon: true,
-  },
-  {
-    title: "React Shadcn Codex",
-    techs: [
-      "React",
-      "shadcn",
-      "Framer Motion",
-      "Lucide React",
-      "Hugging Face",
-      "Datasets",
-    ],
-    description:
-      "The React Shadcn Codex is a curated collection of over 3,000 React components that utilize shadcn, Framer Motion, and Lucide React. This dataset provides a valuable resource for developers looking to understand and implement modern React UI components with these popular libraries.",
-    link: "https://huggingface.co/datasets/valentin-marquez/react-shadcn-codex",
-    blogUrl:
-      "https://nozz.dev/posts/creando-react-shadcn-codex-dataset-parte-1",
-    startDate: new Date("2024-09-07T03:00:43.000Z"),
+    isArchived: false,
+    startDate: new Date("2024-11-12"),
+    githubUrl: "https://github.com/valentin-marquez/nozz-ui",
   },
   {
     title: "Arkz",
+    techs: ["Next.js", "TypeScript", "Tailwind CSS", "Supabase", "PostgreSQL"],
+    link: "https://arkz.tech/",
     description:
-      "ARKZ is a community-driven web application designed to be a comprehensive database of teams for Nikke: Goddess of Victory. Our platform allows players to search, share, and discover effective team compositions for various game modes.",
-    techs: ["TypeScript", "React", "Next.js", "TailwindCSS"],
-    link: "https://github.com/valentin-marquez/arkz",
-    blogUrl: "https://nozz.dev/posts/arkz-plataforma-comunitaria-nikke",
-    startDate: new Date("2024-07-08T20:02:00.000Z"),
+      "ARKZ es una plataforma web dedicada a NIKKE, que permite a los jugadores compartir y descubrir las mejores composiciones de equipo. Desarrollada con tecnologías modernas como Next.js, TypeScript y Tailwind CSS, la plataforma ofrece una interfaz intuitiva para explorar estrategias para diversos modos de juego, incluyendo Story Mode y Tribe Tower. La aplicación incluye funcionalidades de filtrado avanzado, sistema de votación, y una API robusta para gestionar las contribuciones de la comunidad.",
+    isComingSoon: false,
+    isArchived: false,
+    startDate: new Date("2024-10-08"),
+    githubUrl: "https://github.com/arkz-tech/arkz",
   },
   {
-    title: "Pix",
+    title: "NIKKE OCR",
+    techs: ["Python", "OCR"],
+    link: "",
     description:
-      "🎨 Pix es una librería Node.js para extraer colores dominantes de imágenes.",
-    techs: ["TypeScript", "Node.js"],
-    link: "https://github.com/valentin-marquez/pix",
-    blogUrl: "https://nozz.dev/posts/creando-librerias-para-node-con-rust",
-    startDate: new Date("2024-02-19T17:28:00.000Z"),
+      "NIKKE OCR es una herramienta no invasiva diseñada para capturar y registrar información de personajes del juego móvil NIKKE: Goddess of Victory. Este programa utiliza tecnología de reconocimiento óptico de caracteres (OCR) para extraer datos de capturas de pantalla del juego, asegurando que no haya interferencia con los archivos o procesos del juego. La herramienta automatiza el escaneo de personajes NIKKE, extrae atributos de personajes incluyendo nombre, rareza, elemento, tipo de arma, escuadrón, tipo de ráfaga y poder de combate, almacena la información de personajes en una base de datos local y proporciona una interfaz amigable con registro en tiempo real.",
+    isComingSoon: false,
+    isArchived: false,
+    startDate: new Date("2024-10-15"),
+    githubUrl: "https://github.com/arkz-tech/nikke-ocr",
   },
 ];
 

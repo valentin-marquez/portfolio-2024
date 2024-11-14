@@ -1,85 +1,239 @@
 ---
-import { formatDate, projects } from "../data/portfolio";
+import {
+  Archive,
+  Calendar,
+  Clock,
+  Download,
+  ExternalLink,
+  GitFork,
+  Github,
+  Star,
+  Tag,
+  Users,
+} from "lucide-react";
+import { projects } from "../data/projects";
 import Layout from "../layouts/Layout.astro";
 
-// Ordenar proyectos por fecha y filtrar los no archivados primero
+// Función helper para formatear fechas
+const formatDate = (date: Date) => {
+  return new Intl.DateTimeFormat("es-ES", {
+    year: "numeric",
+    month: "long",
+  }).format(new Date(date));
+};
+
+// Ordenar proyectos por fecha de inicio
 const sortedProjects = [...projects].sort((a, b) => {
   if (!a.startDate || !b.startDate) return 0;
   return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
 });
 
+// Filtrar proyectos por status
 const activeProjects = sortedProjects.filter(
-  (p) => !p.isArchived && !p.isComingSoon
+  (p) => p.status === "in-development" || p.status === "completed"
 );
-const archivedProjects = sortedProjects.filter((p) => p.isArchived);
-const comingSoonProjects = sortedProjects.filter((p) => p.isComingSoon);
+const archivedProjects = sortedProjects.filter((p) => p.status === "archived");
+const comingSoonProjects = sortedProjects.filter(
+  (p) => p.status === "coming-soon"
+);
+
+// Obtener tecnologías únicas
+const uniqueTechs = new Set(
+  activeProjects.flatMap((p) => p.techs.map((tech) => tech.name))
+);
 ---
 
 <Layout title="Proyectos">
-  <main class="bg-background text-foreground min-h-screen py-12">
+  <main
+    class="bg-background text-foreground min-h-screen py-12"
+    transition:animate="slide"
+  >
     <div class="container mx-auto px-4 max-w-4xl">
+      <!-- Header -->
       <header
-        class="mb-12 bg-card p-8 rounded-lg border border-border shadow-md hero-section"
-        transition:animate="fade"
+        class="mb-8 bg-card p-8 rounded-lg border border-border shadow-md"
+        transition:name="projects-header"
       >
-        <h1 class="text-4xl font-semibold mb-4 text-primary">Proyectos</h1>
-        <p class="text-lg text-muted-foreground">
+        <h1
+          class="text-4xl font-semibold mb-4 text-primary"
+          transition:name="projects-title"
+        >
+          Proyectos
+        </h1>
+        <p
+          class="text-lg text-muted-foreground"
+          transition:name="projects-description"
+        >
           Una colección de mis proyectos personales y profesionales, mostrando
           mi experiencia en desarrollo web y software.
         </p>
       </header>
 
+      <!-- Estadísticas Cards -->
+      <section
+        class="mb-12 grid grid-cols-2 sm:grid-cols-3 gap-4"
+        transition:name="projects-stats"
+      >
+        <div
+          class="bg-card p-6 rounded-lg border border-border shadow-sm hover:shadow-md transition-all duration-300"
+          transition:name="active-projects-card"
+        >
+          <span class="block text-3xl font-bold text-primary mb-2"
+            >{activeProjects.length}</span
+          >
+          <div class="flex items-center gap-2 text-sm text-muted-foreground">
+            <Clock className="w-4 h-4" />
+            <span>Proyectos Activos</span>
+          </div>
+        </div>
+        <div
+          class="bg-card p-6 rounded-lg border border-border shadow-sm hover:shadow-md transition-all duration-300"
+          transition:name="tech-count-card"
+        >
+          <span class="block text-3xl font-bold text-primary mb-2"
+            >{uniqueTechs.size}</span
+          >
+          <div class="flex items-center gap-2 text-sm text-muted-foreground">
+            <Tag className="w-4 h-4" />
+            <span>Tecnologías</span>
+          </div>
+        </div>
+        <div
+          class="col-span-2 sm:col-span-1 bg-card p-6 rounded-lg border border-border shadow-sm hover:shadow-md transition-all duration-300"
+          transition:name="archived-count-card"
+        >
+          <span class="block text-3xl font-bold text-primary mb-2"
+            >{archivedProjects.length}</span
+          >
+          <div class="flex items-center gap-2 text-sm text-muted-foreground">
+            <Archive className="w-4 h-4" />
+            <span>Proyectos Completados</span>
+          </div>
+        </div>
+      </section>
+
       <!-- Active Projects -->
-      <section class="mb-12 projects-grid">
+      <section class="mb-12" transition:name="active-projects-section">
         <div class="grid gap-6">
           {
-            activeProjects.map((project) => (
-              <article class="bg-card p-6 rounded-lg border border-border shadow-md hover:shadow-lg transition-shadow duration-300">
-                <div class="flex flex-col md:flex-row justify-between gap-4">
+            activeProjects.map((project, index) => (
+              <article
+                class="bg-card p-6 rounded-lg border border-border shadow-sm hover:shadow-md transition-all duration-300"
+                transition:name={`project-card-${index}`}
+              >
+                <div class="space-y-6 sm:space-y-0 sm:flex sm:justify-between sm:gap-4">
                   <div class="flex-1">
-                    <h2 class=" text-2xl mb-2">
-                      <a
-                        href={project.link}
-                        class="text-primary hover:text-accent transition-colors duration-200"
+                    <div class="flex items-center gap-2 mb-2">
+                      <h2
+                        class="text-xl sm:text-2xl font-semibold"
+                        transition:name={`project-title-${project.title}`}
                       >
-                        {project.title}
-                      </a>
-                    </h2>
+                        <a
+                          href={
+                            project.links?.github || project.links?.production
+                          }
+                          class="text-primary hover:text-accent transition-colors duration-200"
+                        >
+                          {project.title}
+                        </a>
+                      </h2>
+                      {project.isFeatured && (
+                        <span
+                          class="bg-accent/20 text-accent px-2 py-0.5 rounded-full text-xs"
+                          transition:name={`project-featured-${project.title}`}
+                        >
+                          Featured
+                        </span>
+                      )}
+                    </div>
+
                     {project.startDate && (
-                      <p class=" text-sm text-muted-foreground mb-2">
-                        {formatDate(project.startDate)}
-                      </p>
+                      <div
+                        class="flex items-center gap-2 text-sm text-muted-foreground mb-2"
+                        transition:name={`project-date-${project.title}`}
+                      >
+                        <Calendar className="w-4 h-4" />
+                        <span>{formatDate(project.startDate)}</span>
+                      </div>
                     )}
-                    <p class=" text-muted-foreground mb-4">
-                      {project.description}
+
+                    <p
+                      class="text-muted-foreground mb-4"
+                      transition:name={`project-description-${project.title}`}
+                    >
+                      {project.shortDescription || project.description}
                     </p>
-                    <div class="flex flex-wrap gap-2">
+
+                    {/* Project Metrics */}
+                    {project.metrics && (
+                      <div
+                        class="flex gap-4 mb-4"
+                        transition:name={`project-metrics-${project.title}`}
+                      >
+                        {project.metrics.stars && (
+                          <div class="flex items-center gap-1">
+                            <Star className="w-4 h-4" />
+                            <span class="text-sm">{project.metrics.stars}</span>
+                          </div>
+                        )}
+                        {project.metrics.forks && (
+                          <div class="flex items-center gap-1">
+                            <GitFork className="w-4 h-4" />
+                            <span class="text-sm">{project.metrics.forks}</span>
+                          </div>
+                        )}
+                        {project.metrics.downloads && (
+                          <div class="flex items-center gap-1">
+                            <Download className="w-4 h-4" />
+                            <span class="text-sm">
+                              {project.metrics.downloads}
+                            </span>
+                          </div>
+                        )}
+                        {project.metrics.users && (
+                          <div class="flex items-center gap-1">
+                            <Users className="w-4 h-4" />
+                            <span class="text-sm">{project.metrics.users}</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    <div
+                      class="flex flex-wrap gap-2"
+                      transition:name={`project-techs-${project.title}`}
+                    >
                       {project.techs.map((tech) => (
                         <span class="text-xs px-3 py-1 bg-muted rounded-full text-muted-foreground">
-                          {tech}
+                          {tech.name} {tech.version && `v${tech.version}`}
                         </span>
                       ))}
                     </div>
                   </div>
-                  <div class="flex flex-row md:flex-col gap-2 items-start">
-                    {project.link && (
+                  <div
+                    class="flex gap-3 sm:flex-col sm:gap-2"
+                    transition:name={`project-links-${project.title}`}
+                  >
+                    {project.links?.github && (
                       <a
-                        href={project.link}
-                        class="w-full px-4 text-center py-2 bg-card hover:bg-muted text-muted-foreground rounded-lg border border-border transition-colors duration-200 text-sm "
+                        href={project.links.github}
+                        class="flex items-center justify-center gap-2 flex-1 sm:flex-none sm:w-32 px-4 py-2 bg-card hover:bg-muted text-muted-foreground rounded-lg border border-border transition-colors duration-200 text-sm"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        GitHub
+                        <Github className="w-4 h-4" />
+                        <span>GitHub</span>
                       </a>
                     )}
-                    {project.link && (
+                    {project.links?.production && (
                       <a
-                        href={project.link}
-                        class="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors duration-200 text-sm "
+                        href={project.links.production}
+                        class="flex items-center justify-center gap-2 flex-1 sm:flex-none sm:w-32 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors duration-200 text-sm"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        Ver Proyecto
+                        <ExternalLink className="w-4 h-4" />
+                        <span>Ver Demo</span>
                       </a>
                     )}
                   </div>
@@ -93,22 +247,30 @@ const comingSoonProjects = sortedProjects.filter((p) => p.isComingSoon);
       <!-- Coming Soon Projects -->
       {
         comingSoonProjects.length > 0 && (
-          <section class="mb-12">
-            <h2 class=" text-2xl text-primary mb-6">Próximamente</h2>
+          <section class="mb-12" transition:name="coming-soon-section">
+            <h2
+              class="text-2xl font-semibold text-primary mb-6"
+              transition:name="coming-soon-title"
+            >
+              Próximamente
+            </h2>
             <div class="grid gap-6">
-              {comingSoonProjects.map((project) => (
-                <article class="bg-card p-6 rounded-lg border border-border shadow-md opacity-75">
-                  <h3 class=" text-xl mb-2">
+              {comingSoonProjects.map((project, index) => (
+                <article
+                  class="bg-card/60 p-6 rounded-lg border border-border shadow-sm"
+                  transition:name={`coming-soon-card-${index}`}
+                >
+                  <h3 class="text-lg sm:text-xl font-medium mb-2">
                     {project.title}
                     <span class="ml-2 text-sm text-accent">(Coming Soon)</span>
                   </h3>
-                  <p class=" text-muted-foreground mb-4">
-                    {project.description}
+                  <p class="text-muted-foreground mb-4">
+                    {project.shortDescription || project.description}
                   </p>
                   <div class="flex flex-wrap gap-2">
                     {project.techs.map((tech) => (
                       <span class="text-xs px-3 py-1 bg-muted rounded-full text-muted-foreground">
-                        {tech}
+                        {tech.name}
                       </span>
                     ))}
                   </div>
@@ -122,26 +284,37 @@ const comingSoonProjects = sortedProjects.filter((p) => p.isComingSoon);
       <!-- Archived Projects -->
       {
         archivedProjects.length > 0 && (
-          <section class="mb-12">
-            <h2 class=" text-2xl text-primary mb-6">Proyectos Archivados</h2>
+          <section class="mb-12" transition:name="archived-section">
+            <h2
+              class="text-2xl font-semibold text-primary mb-6"
+              transition:name="archived-title"
+            >
+              Proyectos Archivados
+            </h2>
             <div class="grid gap-6">
-              {archivedProjects.map((project) => (
-                <article class="bg-card p-6 rounded-lg border border-border shadow-md opacity-75">
-                  <div class="flex flex-col md:flex-row justify-between gap-4">
-                    <div class="flex-1">
-                      <h3 class=" text-xl mb-2">{project.title}</h3>
+              {archivedProjects.map((project, index) => (
+                <article
+                  class="bg-card/60 p-6 rounded-lg border border-border shadow-sm"
+                  transition:name={`archived-card-${index}`}
+                >
+                  <div class="space-y-4">
+                    <div>
+                      <h3 class="text-lg sm:text-xl font-medium mb-2">
+                        {project.title}
+                      </h3>
                       {project.startDate && (
-                        <p class=" text-sm text-muted-foreground mb-2">
-                          {formatDate(project.startDate)}
-                        </p>
+                        <div class="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                          <Calendar className="w-4 h-4" />
+                          <span>{formatDate(project.startDate)}</span>
+                        </div>
                       )}
-                      <p class=" text-muted-foreground mb-4">
-                        {project.description}
+                      <p class="text-muted-foreground mb-4">
+                        {project.shortDescription || project.description}
                       </p>
                       <div class="flex flex-wrap gap-2">
                         {project.techs.map((tech) => (
                           <span class="text-xs px-3 py-1 bg-muted rounded-full text-muted-foreground">
-                            {tech}
+                            {tech.name}
                           </span>
                         ))}
                       </div>
@@ -156,3 +329,57 @@ const comingSoonProjects = sortedProjects.filter((p) => p.isComingSoon);
     </div>
   </main>
 </Layout>
+
+<style>
+  /* Add view transition styles */
+  @keyframes slide-up {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* Apply animations to sections */
+  :root {
+    --section-animation-duration: 0.5s;
+    --section-animation-timing: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  section {
+    view-transition-name: section;
+    animation: slide-up var(--section-animation-duration)
+      var(--section-animation-timing);
+  }
+
+  article {
+    view-transition-name: article;
+    animation: fade-in var(--section-animation-duration)
+      var(--section-animation-timing);
+  }
+
+  /* Specific transition styles for different elements */
+  ::view-transition-old(section),
+  ::view-transition-new(section) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+
+  ::view-transition-old(article),
+  ::view-transition-new(article) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+</style>

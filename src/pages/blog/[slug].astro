@@ -2,10 +2,9 @@
 import { CalendarIcon } from "@/components/react/icons";
 import { formatDate } from "@/data/portfolio";
 import Layout from "@/layouts/Layout.astro";
+import { Image } from "astro:assets";
 import { getCollection, render } from "astro:content";
-
-// Get the slug from params
-const { slug } = Astro.params;
+import { fileToUrl } from "notion-astro-loader";
 
 // Generate static paths
 export async function getStaticPaths() {
@@ -26,9 +25,7 @@ const categories = post.data.properties.category.multi_select;
 const tags = post.data.properties.tags.multi_select;
 
 // Render the content
-const { Content, headings } = await render(post);
----
-
+const { Content } = await render(post);
 ---
 
 <Layout title={`${post.data.properties.title.rich_text[0].plain_text} | Blog`}>
@@ -51,25 +48,27 @@ const { Content, headings } = await render(post);
             post.data.properties.author.people &&
               post.data.properties.author.people.length > 0 && (
                 <div class="flex items-center gap-2">
-                  <div class="w-6 h-6 rounded-full bg-secondary flex items-center justify-center">
-                    <span class="text-xs">
-                      {post.data.properties.author.people[0].name.charAt(0)}
-                    </span>
-                  </div>
-                  {/* {post.data.properties.author.people[0].avatar_url ? (
+                  {post.data.properties.author.people[0].avatar_url ? (
                     <Image
-                      src={post.data.properties.author.people[0].avatar_url}
-                      alt={post.data.properties.author.people[0].name}
+                      src={
+                        post.data.properties.author.people[0]
+                          .avatar_url as string
+                      }
+                      alt={
+                        String(post.data.properties.author.people[0].name) ?? ""
+                      }
                       class="w-6 h-6 rounded-full"
                       inferSize
                     />
                   ) : (
                     <div class="w-6 h-6 rounded-full bg-secondary flex items-center justify-center">
                       <span class="text-xs">
-                        {post.data.properties.author.people[0].name.charAt(0)}
+                        {String(
+                          post.data.properties.author.people[0].name
+                        ).charAt(0)}
                       </span>
                     </div>
-                  )} */}
+                  )}
                   <span>{post.data.properties.author.people[0].name}</span>
                 </div>
               )
@@ -92,7 +91,7 @@ const { Content, headings } = await render(post);
           )
         }
 
-        <!-- {
+        {
           post.data.properties.featuredImage.files.length > 0 && (
             <div class="relative aspect-video mb-12 rounded-lg overflow-hidden shadow-lg">
               <Image
@@ -105,7 +104,7 @@ const { Content, headings } = await render(post);
               />
             </div>
           )
-        } -->
+        }
       </header>
 
       <!-- Content -->

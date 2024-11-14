@@ -1,17 +1,22 @@
 // @ts-check
-import cloudflare from '@astrojs/cloudflare';
-import { rehypeHeadingIds, rehypeShiki, remarkCollectImages } from '@astrojs/markdown-remark';
-import react from '@astrojs/react';
-import tailwind from '@astrojs/tailwind';
-import { defineConfig } from 'astro/config';
-import rehypeSlug from 'rehype-slug';
-import remarkGfm from 'remark-gfm';
-import remarkMermaid from 'remark-mermaidjs';
+import {
+  rehypeHeadingIds,
+  rehypeShiki,
+  remarkCollectImages,
+} from "@astrojs/markdown-remark";
+import react from "@astrojs/react";
+import tailwind from "@astrojs/tailwind";
+import { defineConfig } from "astro/config";
+import rehypeSlug from "rehype-slug";
+import remarkGfm from "remark-gfm";
+import remarkMermaid from "remark-mermaidjs";
 
+import vercel from "@astrojs/vercel/serverless";
 
 // https://astro.build/config
 export default defineConfig({
   site: "https://nozz.dev/",
+
   integrations: [
     tailwind({
       applyBaseStyles: false,
@@ -20,6 +25,7 @@ export default defineConfig({
       experimentalReactChildren: true,
     }),
   ],
+
   image: {
     remotePatterns: [
       {
@@ -28,36 +34,45 @@ export default defineConfig({
       },
     ],
   },
+
   output: "hybrid",
-  adapter: cloudflare(),
+
   experimental: {
     contentLayer: true,
   },
+
   markdown: {
     rehypePlugins: [
-      [rehypeShiki, {
-        theme: 'github-dark', // Cambiado a un tema más compatible
-        highlighter: 'shiki',
-        wrap: true,
-      }],
+      [
+        rehypeShiki,
+        {
+          theme: "github-dark", // Cambiado a un tema más compatible
+          highlighter: "shiki",
+          wrap: true,
+        },
+      ],
       rehypeHeadingIds,
-      rehypeSlug
+      rehypeSlug,
     ],
     remarkPlugins: [
       remarkCollectImages,
       remarkGfm,
-      [remarkMermaid, {
-        theme: 'dark',
-        wrap: true,
-        sequence: {
-          actorFontFamily: 'Space Grotesk',
-          noteFontFamily: 'Crimson Text',
-          messageFontFamily: 'Crimson Text'
-        }
-      }]
+      [
+        remarkMermaid,
+        {
+          theme: "dark",
+          wrap: true,
+          sequence: {
+            actorFontFamily: "Space Grotesk",
+            noteFontFamily: "Crimson Text",
+            messageFontFamily: "Crimson Text",
+          },
+        },
+      ],
     ],
     shikiConfig: {
-      wrap: true
-    }
-  }
+      wrap: true,
+    },
+  },
+  adapter: vercel(),
 });

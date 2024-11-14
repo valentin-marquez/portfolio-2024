@@ -6,43 +6,47 @@ import {
   GithubIcon,
   LinkedinIcon,
 } from "@/components/react/icons";
-import {
-  DecoratedHeading,
-  VintageHighlight,
-} from "@/components/react/vintageHighlight";
+import { VintageHighlight } from "@/components/react/vintageHighlight";
 import {
   formatDate,
   projects,
   socialLinks,
   workExperience,
 } from "@/data/portfolio";
-import Layout from "../layouts/Layout.astro";
+import Layout from "@/layouts/Layout.astro";
+import { getCollection } from "astro:content";
 
-// Filtrar proyectos con blog posts
-const blogPosts = projects.filter((project) => project.blogUrl);
+const posts = await getCollection("posts");
 ---
 
 <Layout title="Inicio">
-  <main class="bg-background text-foreground min-h-screen py-12">
+  <main class="bg-background text-foreground min-h-screen py-6 sm:py-12">
     <div class="container mx-auto px-4 max-w-4xl">
       <!-- Hero Section with About -->
-      <div class="grid md:grid-cols-[2fr,1fr] gap-6 mb-12 hero-section">
-        <header class="bg-card p-8 rounded-lg border border-border shadow-md">
-          <h1 class="text-4xl font-semibold mb-4 text-primary">
+      <div class="flex flex-col gap-4 mb-6 sm:mb-12">
+        <!-- Profile Header -->
+        <header
+          class="bg-card p-4 sm:p-8 rounded-lg border border-border shadow-md"
+        >
+          <h1
+            class="text-3xl sm:text-4xl font-semibold mb-3 sm:mb-4 text-primary"
+          >
             Valentin Marquez
           </h1>
-          <p class="text-lg mb-6">
-            Software Engineer based in Santiago, Chile, specializing in modern
-            web development.
-            <AgeTooltip client:only="react" /> with proven expertise in
+          <p class="text-base sm:text-lg mb-4 sm:mb-6">
+            Ingeniero de Software en Santiago, Chile, especializado en
+            desarrollo web moderno y tecnologías emergentes.
+            <AgeTooltip client:only="react" /> de experiencia con dominio en
             <VintageHighlight type="underline" client:only="react">
-              front-end architecture
-            </VintageHighlight>
-            and cutting-edge web technologies. Passionate about creating efficient,
-            user-centric solutions.
+              arquitectura front-end
+            </VintageHighlight> y
+            <VintageHighlight type="underline" client:only="react">
+              desarrollo full-stack
+            </VintageHighlight>. Apasionado por crear soluciones eficientes,
+            escalables y centradas en la experiencia del usuario.
           </p>
 
-          <div class="flex flex-row gap-4">
+          <div class="flex flex-wrap gap-2 sm:gap-4">
             {
               socialLinks.map((link) => (
                 <a
@@ -50,9 +54,9 @@ const blogPosts = projects.filter((project) => project.blogUrl);
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`Visit ${link.name} profile`}
-                  class=" text-sm text-muted-foreground hover:text-accent transition-colors duration-200 p-2 rounded-lg hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary"
+                  class="flex-1 sm:flex-none text-sm text-muted-foreground hover:text-accent transition-colors duration-200 p-2 rounded-lg hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary text-center sm:text-left"
                 >
-                  <span class="flex items-center gap-2">
+                  <span class="flex items-center justify-center sm:justify-start gap-2">
                     {link.name === "github" && <GithubIcon />}
                     {link.name === "linkedin" && <LinkedinIcon />}
                     {link.name === "discord" && <DiscordIcon />}
@@ -65,44 +69,45 @@ const blogPosts = projects.filter((project) => project.blogUrl);
           </div>
         </header>
 
-        <div class="bg-card p-8 rounded-lg border border-border shadow-md">
-          <h2 class="text-xl text-primary mb-4">Current Focus</h2>
-          <p class="text-lg">
-            Actively seeking new opportunities while deepening expertise in
-            <VintageHighlight client:only="react" type="mark"
-              >Machine Learning</VintageHighlight
-            > and
-            <VintageHighlight client:only="react" type="mark"
-              >Data Analytics</VintageHighlight
-            >. Driven by continuous learning and innovation.
+        <!-- Current Focus -->
+        <div
+          class="bg-card p-4 sm:p-8 rounded-lg border border-border shadow-md"
+        >
+          <h2 class="text-xl text-primary mb-4 sm:mb-5">Enfoque Actual</h2>
+          <p class="text-base sm:text-lg leading-relaxed">
+            Buscando activamente nuevas oportunidades mientras profundizo mi
+            experiencia en
+            <VintageHighlight client:only="react" type="mark">
+              Desarrollo Web Moderno
+            </VintageHighlight> y
+            <VintageHighlight client:only="react" type="mark">
+              Arquitectura de Software
+            </VintageHighlight>. Motivado por el aprendizaje continuo y la
+            innovación.
           </p>
         </div>
       </div>
 
       <!-- Work Experience Section -->
       <section
-        class="mb-12 bg-card p-8 rounded-lg border border-border shadow-md"
+        class="mb-6 sm:mb-12 bg-card p-4 sm:p-8 rounded-lg border border-border shadow-md"
       >
-        <h2 class="text-2xl text-primary mb-8">
-          <DecoratedHeading client:only="react"
-            >Work Experience</DecoratedHeading
-          >
-        </h2>
-        <div class="space-y-8">
+        <h2 class="text-2xl text-primary mb-6 sm:mb-8">Experiencia Laboral</h2>
+        <div class="space-y-6 sm:space-y-8">
           {
             workExperience.map((item) => (
-              <div class="grid md:grid-cols-[1fr,auto] gap-6 pb-8 border-b border-border last:pb-0 last:border-0">
+              <div class="flex flex-col sm:grid sm:grid-cols-[1fr,auto] gap-4 sm:gap-6 pb-6 sm:pb-8 border-b border-border last:pb-0 last:border-0">
                 <div>
-                  <h3 class=" text-xl mb-2">{item.company}</h3>
-                  <p class=" text-accent text-lg">{item.role}</p>
-                  <p class=" text-sm text-muted-foreground mt-2">
+                  <h3 class="text-xl mb-2">{item.company}</h3>
+                  <p class="text-accent text-lg">{item.role}</p>
+                  <p class="text-sm text-muted-foreground mt-2">
                     {item.period}
                   </p>
-                  <p class=" text-muted-foreground mt-4 max-w-2xl">
+                  <p class="text-muted-foreground mt-4 max-w-2xl">
                     {item.description}
                   </p>
                 </div>
-                <span class=" text-sm text-primary px-4 py-2 bg-muted rounded-full h-fit">
+                <span class="self-start text-sm text-primary px-4 py-2 bg-muted rounded-full">
                   {item.type}
                 </span>
               </div>
@@ -112,11 +117,13 @@ const blogPosts = projects.filter((project) => project.blogUrl);
       </section>
 
       <!-- Projects and Blog Grid -->
-      <div class="grid md:grid-cols-2 gap-6 projects-grid">
+      <div class="flex flex-col gap-6 sm:grid sm:grid-cols-2">
         <!-- Featured Projects Section -->
-        <section class="bg-card p-8 rounded-lg border border-border shadow-md">
-          <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl text-primary">Featured Projects</h2>
+        <section
+          class="bg-card p-4 sm:p-8 rounded-lg border border-border shadow-md"
+        >
+          <div class="flex justify-between items-center mb-4 sm:mb-6">
+            <h2 class="text-2xl text-primary">Proyectos Destacados</h2>
             <a
               href="/projects"
               class="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors duration-200 text-sm"
@@ -124,26 +131,28 @@ const blogPosts = projects.filter((project) => project.blogUrl);
               Ver todos
             </a>
           </div>
-          <div class="space-y-6">
+          <div class="space-y-4 sm:space-y-6">
             {
               projects
                 .filter((p) => !p.isArchived && !p.isComingSoon)
-                .slice(0, 4)
+
                 .map((project) => (
                   <div class="border-b border-border pb-4 last:border-0 last:pb-0">
                     <a
-                      href={project.link}
+                      href={
+                        project.link || project.blogUrl || project.githubUrl
+                      }
                       target="_blank"
                       rel="noopener noreferrer"
-                      class=" text-lg hover:text-accent transition-colors duration-200 block p-2 rounded-lg hover:bg-muted/50"
+                      class="block text-lg hover:text-accent transition-colors duration-200 p-2 rounded-lg hover:bg-muted/50"
                     >
-                      <div class="flex justify-between items-start mb-2">
-                        <div class="flex-1">
-                          <h4 class=" text-lg hover:text-accent transition-colors duration-200 block">
+                      <div class="flex flex-col sm:flex-row justify-between items-start mb-2">
+                        <div class="flex-1 mb-2 sm:mb-0">
+                          <h4 class="text-lg hover:text-accent transition-colors duration-200">
                             {project.title}
                             {project.isComingSoon && (
                               <span class="ml-2 text-sm text-accent">
-                                (Coming Soon)
+                                (Próximamente)
                               </span>
                             )}
                           </h4>
@@ -152,7 +161,7 @@ const blogPosts = projects.filter((project) => project.blogUrl);
                               {formatDate(project.startDate)}
                             </span>
                           )}
-                          <p class="text-sm text-muted-foreground mt-2">
+                          <p class="text-sm text-muted-foreground mt-2 line-clamp-2 group-hover:line-clamp-none transition-all duration-200">
                             {project.description}
                           </p>
                         </div>
@@ -172,9 +181,11 @@ const blogPosts = projects.filter((project) => project.blogUrl);
         </section>
 
         <!-- Blog Posts Section -->
-        <section class="bg-card p-8 rounded-lg border border-border shadow-md">
-          <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl text-primary">Latest Posts</h2>
+        <section
+          class="bg-card p-4 sm:p-8 rounded-lg border border-border shadow-md"
+        >
+          <div class="flex justify-between items-center mb-4 sm:mb-6">
+            <h2 class="text-2xl text-primary">Últimos Posts</h2>
             <a
               href="/blog"
               class="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors duration-200 text-sm"
@@ -182,29 +193,37 @@ const blogPosts = projects.filter((project) => project.blogUrl);
               Ver blog
             </a>
           </div>
-          <div class="space-y-6">
+          <div class="space-y-4 sm:space-y-6">
             {
-              blogPosts.slice(0, 4).map((project) => (
+              posts.map((post) => (
                 <div class="border-b border-border pb-4 last:border-0 last:pb-0">
-                  <a href={project.blogUrl}>
-                    <div class="flex justify-between items-start mb-2">
-                      <div class="flex-1">
-                        <h4 class=" text-lg hover:text-accent transition-colors duration-200 block">
-                          {project.title}
+                  <a
+                    href={`/blog/${post.data.properties.slug.rich_text[0].plain_text}`}
+                    class="block hover:bg-muted/50 rounded-lg p-2 transition-colors"
+                  >
+                    <div class="flex flex-col sm:flex-row justify-between items-start mb-2">
+                      <div class="flex-1 mb-2 sm:mb-0">
+                        <h4 class="text-lg hover:text-accent transition-colors duration-200">
+                          {post.data.properties.title.rich_text[0].plain_text}
                         </h4>
-                        {project.startDate && (
-                          <span class="text-sm text-muted-foreground block mt-1">
-                            {formatDate(project.startDate)}
-                          </span>
-                        )}
+                        <span class="text-sm text-muted-foreground block mt-1">
+                          {formatDate(
+                            post.data.properties.publishedAt.created_time
+                          )}
+                        </span>
+                        <p class="text-sm text-muted-foreground mt-2 line-clamp-2">
+                          {post.data.properties.summary.rich_text[0].plain_text}
+                        </p>
                       </div>
                     </div>
                     <div class="flex flex-wrap gap-2 mt-2">
-                      {project.techs.map((tech) => (
-                        <span class="text-xs px-2 py-1 bg-muted rounded-full text-muted-foreground">
-                          {tech}
-                        </span>
-                      ))}
+                      {post.data.properties.tags.multi_select
+                        .slice(0, 3)
+                        .map((tag) => (
+                          <span class="text-xs px-2 py-1 bg-muted rounded-full text-muted-foreground">
+                            {tag.name}
+                          </span>
+                        ))}
                     </div>
                   </a>
                 </div>

@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import type { AlertProps } from "@/types";
 import { alertVariants } from "@/types/variants";
-import { motion } from "framer-motion";
+import { type HTMLMotionProps, motion } from "framer-motion";
 import {
   AlertCircle,
   AlertTriangle,
@@ -30,7 +30,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
         exit={{ opacity: 0, y: -20 }}
         transition={{ type: "spring", bounce: 0.1, duration: 0.25 }}
         className={cn(alertVariants({ variant, size }), className)}
-        {...props}
+        {...(props as React.ComponentProps<typeof motion.div>)}
       >
         <IconComponent className="h-4 w-4" />
         {children}
@@ -40,11 +40,15 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
 );
 Alert.displayName = "Alert";
 
+type AlertDescriptionProps = HTMLMotionProps<"p"> & {
+  className?: string;
+};
+
 const AlertDescription = React.forwardRef<
   HTMLParagraphElement,
-  React.HTMLAttributes<HTMLParagraphElement>
+  AlertDescriptionProps
 >(({ className, ...props }, ref) => (
-  <motion.div
+  <motion.p
     ref={ref}
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}

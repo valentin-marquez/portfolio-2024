@@ -5,9 +5,13 @@ import * as TabsPrimitive from "@radix-ui/react-tabs";
 import { motion } from "framer-motion";
 import * as React from "react";
 
+// Combine TabsProps with Radix UI's Root props
+type CombinedTabsProps = TabsProps &
+  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Root>;
+
 const Tabs = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Root>,
-  TabsProps
+  CombinedTabsProps
 >(({ className, variant, size, ...props }, ref) => (
   <TabsPrimitive.Root
     ref={ref}

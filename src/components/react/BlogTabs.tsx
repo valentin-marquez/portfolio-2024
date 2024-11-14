@@ -1,3 +1,4 @@
+// BlogTabs.tsx
 import BlogPostCard from "@/components/react/BlogPostCard";
 import {
   Tabs,
@@ -8,7 +9,6 @@ import {
 
 interface RichTextItem {
   plain_text: string;
-  // Add other properties as needed
 }
 
 interface SelectOption {
@@ -18,7 +18,6 @@ interface SelectOption {
 }
 
 interface FileItem {
-  // Add file properties as needed
   url: string;
   name: string;
 }
@@ -30,7 +29,7 @@ interface PostProperties {
   content: { type: "title"; id: string; title: RichTextItem[] };
   category: { type: "multi_select"; id: string; multi_select: SelectOption[] };
   tags: { type: "multi_select"; id: string; multi_select: SelectOption[] };
-  author: { type: "people"; id: string; people: any[] }; // Define people type if needed
+  author: { type: "people"; id: string; people: any[] };
   publishedAt: { type: "created_time"; id: string; created_time: string };
   status: { type: "select"; id: string; select: SelectOption };
   featured: { type: "checkbox"; id: string; checkbox: boolean };
@@ -49,7 +48,7 @@ interface Post {
     properties: PostProperties;
   };
   digest: string;
-  rendered: any; // Define more specifically if needed
+  rendered: any;
   collection: string;
 }
 
@@ -64,7 +63,6 @@ interface BlogTabsProps {
 }
 
 const BlogTabs = ({ posts, groupedPosts }: BlogTabsProps) => {
-  // Sort posts to show featured ones first
   const sortPosts = (postsToSort: Post[]) => {
     return [...postsToSort].sort((a, b) => {
       // Sort by featured status first
@@ -88,36 +86,60 @@ const BlogTabs = ({ posts, groupedPosts }: BlogTabsProps) => {
   const sortedDrafts = groupedPosts.draft ? sortPosts(groupedPosts.draft) : [];
 
   return (
-    <Tabs defaultValue="all" className="w-full">
-      <TabsList className="mb-8">
-        <TabsTrigger value="all">Todas</TabsTrigger>
-        <TabsTrigger value="published">Publicadas</TabsTrigger>
+    <Tabs defaultValue="all" className="w-full space-y-6">
+      <TabsList className="flex justify-start w-full overflow-x-auto overflow-y-hidden no-scrollbar border-b border-border p-1 bg-transparent">
+        <TabsTrigger value="all" className="flex-shrink-0 px-4 py-2 text-sm">
+          Todas
+        </TabsTrigger>
+        <TabsTrigger
+          value="published"
+          className="flex-shrink-0 px-4 py-2 text-sm"
+        >
+          Publicadas
+        </TabsTrigger>
         {groupedPosts.draft && (
-          <TabsTrigger value="draft">Borradores</TabsTrigger>
+          <TabsTrigger
+            value="draft"
+            className="flex-shrink-0 px-4 py-2 text-sm"
+          >
+            Borradores
+          </TabsTrigger>
         )}
       </TabsList>
 
-      <TabsContent value="all">
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <TabsContent value="all" className="space-y-6">
+        <div className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {sortedPosts.map((post) => (
-            <BlogPostCard key={post.id} post={post.data.properties} />
+            <BlogPostCard
+              key={post.id}
+              post={post.data.properties}
+              className="h-full"
+            />
           ))}
         </div>
       </TabsContent>
 
-      <TabsContent value="published">
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <TabsContent value="published" className="space-y-6">
+        <div className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {sortedPublished.map((post) => (
-            <BlogPostCard key={post.id} post={post.data.properties} />
+            <BlogPostCard
+              key={post.id}
+              post={post.data.properties}
+              className="h-full"
+            />
           ))}
         </div>
       </TabsContent>
 
       {groupedPosts.draft && (
-        <TabsContent value="draft">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <TabsContent value="draft" className="space-y-6">
+          <div className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {sortedDrafts.map((post) => (
-              <BlogPostCard key={post.id} post={post.data.properties} />
+              <BlogPostCard
+                key={post.id}
+                post={post.data.properties}
+                className="h-full"
+              />
             ))}
           </div>
         </TabsContent>
@@ -125,4 +147,5 @@ const BlogTabs = ({ posts, groupedPosts }: BlogTabsProps) => {
     </Tabs>
   );
 };
+
 export default BlogTabs;

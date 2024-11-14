@@ -1,7 +1,12 @@
 import { useTheme } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 import { navigate } from "astro:transitions/client";
-import { AnimatePresence, motion, useAnimation } from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+  useAnimation,
+  type PanInfo,
+} from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Tooltip,
@@ -144,6 +149,7 @@ const useToolbarPosition = () => {
   const toolbarRef = useRef<HTMLDivElement>(null);
   const isDraggingRef = useRef(false);
   const currentPositionRef = useRef({ x: 0, y: 0 });
+  const lastSwipeDirection = useRef<"up" | "down" | null>(null);
 
   const getToolbarDimensions = () => {
     if (!toolbarRef.current) return { width: 0, height: 0 };
@@ -187,6 +193,30 @@ const useToolbarPosition = () => {
     return constrainToViewport(x, y);
   };
 
+  const handleSwipe = (
+    _event: TouchEvent | MouseEvent | PointerEvent,
+    info: PanInfo
+  ) => {
+    const SWIPE_THRESHOLD = 50; // Minimum swipe distance to trigger position change
+    const velocityThreshold = 100; // Minimum velocity to trigger position change
+
+    // Calculate swipe direction based on velocity
+    if (Math.abs(info.velocity.y) > velocityThreshold) {
+      lastSwipeDirection.current = info.velocity.y > 0 ? "down" : "up";
+    } else if (Math.abs(info.offset.y) > SWIPE_THRESHOLD) {
+      lastSwipeDirection.current = info.offset.y > 0 ? "down" : "up";
+    }
+
+    // Determine new position based on swipe direction
+    if (lastSwipeDirection.current === "up" && position === "bottom") {
+      return "top";
+    } else if (lastSwipeDirection.current === "down" && position === "top") {
+      return "bottom";
+    }
+
+    return position;
+  };
+
   return {
     position,
     setPosition,
@@ -199,6 +229,7 @@ const useToolbarPosition = () => {
     toolbarRef,
     isDraggingRef,
     currentPositionRef,
+    handleSwipe,
   };
 };
 
@@ -219,6 +250,7 @@ const NavigationToolbar: React.FC = () => {
     toolbarRef,
     isDraggingRef,
     currentPositionRef,
+    handleSwipe,
   } = useToolbarPosition();
 
   const handleThemeChange = () => {
@@ -248,15 +280,23 @@ const NavigationToolbar: React.FC = () => {
   };
 
   const handleDragEnd = async (
-    _: any,
-    info: { point: { x: number; y: number } }
+    event: MouseEvent | TouchEvent | PointerEvent,
+    info: PanInfo
   ) => {
     setIsDragging(false);
     isDraggingRef.current = false;
     setIsAnimating(true);
 
     const constrained = constrainToViewport(info.point.x, info.point.y);
-    const newPosition = calculatePosition(constrained.y);
+    let newPosition: Position;
+
+    // Check if the movement was primarily a swipe
+    if (Math.abs(info.velocity.y) > Math.abs(info.velocity.x)) {
+      newPosition = handleSwipe(event, info);
+    } else {
+      newPosition = calculatePosition(constrained.y);
+    }
+
     const finalPosition = getPositionCoordinates(newPosition);
 
     try {
@@ -270,7 +310,12 @@ const NavigationToolbar: React.FC = () => {
         x: finalPosition.x,
         y: finalPosition.y,
         scale: 1,
-        transition: ANIMATIONS.toolbar.snap,
+        transition: {
+          ...ANIMATIONS.toolbar.snap,
+          // Add some bounce effect for swipe gestures
+          bounce: 0.3,
+          stiffness: 300,
+        },
       });
 
       setPosition(newPosition);
@@ -297,10 +342,10 @@ const NavigationToolbar: React.FC = () => {
 
   const themeTooltipText =
     {
-      light: "Switch to dark theme",
-      dark: "Switch to system theme",
-      system: "Switch to light theme",
-    }[theme as Theme] || "Switch theme";
+      light: "Cambiar a tema oscuro",
+      dark: "Cambiar a tema del sistema",
+      system: "Cambiar a tema claro",
+    }[theme as Theme] || "Cambiar tema";
 
   return (
     <TooltipProvider>
@@ -327,6 +372,7 @@ const NavigationToolbar: React.FC = () => {
           onDrag={handleDrag}
           onDragEnd={handleDragEnd}
           animate={controls}
+          whileDrag={{ scale: 1.02 }}
         >
           <motion.div
             className={cn(
@@ -342,31 +388,37 @@ const NavigationToolbar: React.FC = () => {
           <ToolbarButton
             icon={<HomeIcon />}
             onClick={() => navigate("/")}
-            label="Home"
+            label="Inicio"
             isActive={window.location.pathname === "/"}
-            tooltipText="Go to home"
+            tooltipText="Ir al inicio"
           />
 
           <ToolbarButton
             icon={<BlogIcon />}
             onClick={() => navigate("/blog")}
             label="Blog"
-            isActive={window.location.pathname === "/blog"}
-            tooltipText="Read blog posts"
+            isActive={
+              window.location.pathname === "/blog" ||
+              window.location.pathname.startsWith("/blog/")
+            }
+            tooltipText="Leer publicaciones del blog"
           />
 
           <ToolbarButton
             icon={<ProjectsIcon />}
             onClick={() => navigate("/projects")}
-            label="Projects"
-            isActive={window.location.pathname === "/projects"}
-            tooltipText="View all projects"
+            label="Proyectos"
+            isActive={
+              window.location.pathname === "/projects" ||
+              window.location.pathname.startsWith("/projects/")
+            }
+            tooltipText="Ver todos los proyectos"
           />
 
           <ToolbarButton
             icon={<ThemeIcon theme={theme as Theme} />}
             onClick={handleThemeChange}
-            label="Toggle theme"
+            label="Cambiar tema"
             tooltipText={themeTooltipText}
           />
         </motion.div>
