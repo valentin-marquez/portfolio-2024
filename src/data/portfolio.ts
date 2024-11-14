@@ -26,7 +26,7 @@ export const socialLinks = [
   { name: "email", url: "mailto:valentin13.mail@gmail.com" },
   {
     name: "linkedin",
-    url: "https://www.linkedin.com/in/valentin-marquez-7b0b7b1b7/",
+    url: "https://www.linkedin.com/in/valentinmarquezmunoz/",
   },
 ];
 
